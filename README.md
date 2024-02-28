@@ -1,5 +1,5 @@
 # Introduction
-This is a boilerplate plugin.
+Integrates the [ESPHome modified](https://github.com/Hypfer/esp8266-vindriktning-particle-sensor) [IKEA VINDRIKTNING](https://www.ikea.com/de/de/p/vindriktning-luftqualitaetssensor-70498242/) sensor into OpenHaus
 
 # Installation
 1) Create a new plugin over the OpenHaus backend HTTP API
@@ -11,23 +11,22 @@ Add plugin item via HTTP API:<br />
 [PUT] `http://{{HOST}}:{{PORT}}/api/plugins/`
 ```json
 {
-   "name":"Plugin Boilerplate",
+   "name":"ESPHome/IKEA Vindriktning Integration ",
    "version":1,
    "intents":[
       "devices",
       "endpoints",
-      "plugins",
-      "rooms",
-      "ssdp",
-      "store",
-      "users",
-      "vault"
+      "mqtt"
    ],
-   "uuid": "00000000-0000-0000-0000-000000000000"
+   "uuid": "a0b38ba9-fff8-4878-ac58-69aaa66bcc88"
 }
 
 ```
 Mount the source code into the backend plugins folder
 ```sh
-sudo mount --bind ~/projects/OpenHaus/plugins/plugin-boilerplate/ ~/projects/OpenHaus/backend/plugins/00000000-0000-0000-0000-000000000000/
+sudo mount --bind ~/projects/OpenHaus/plugins/oh-plg-vindriktning/ ~/projects/OpenHaus/backend/plugins/a0b38ba9-fff8-4878-ac58-69aaa66bcc88/
 ```
+
+# Links
+- https://github.com/Hypfer/esp8266-vindriktning-particle-sensor
+- https://www.ikea.com/de/de/p/vindriktning-luftqualitaetssensor-70498242/

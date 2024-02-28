@@ -2,40 +2,125 @@ module.exports = (info, logger, init) => {
     return init([
         "devices",
         "endpoints",
-        "plugins",
-        "rooms",
-        "ssdp",
-        "store",
-        "users",
-        "vault"
-    ], (scope, [
+        "mqtt"
+    ], async (scope, [
         C_DEVICES,
         C_ENDPOINTS,
-        C_PLUGINS,
-        C_ROOMS,
-        C_SSDP,
-        C_STORE,
-        C_USERS,
-        C_VAULT
+        C_MQTT
     ]) => {
 
 
-        // do something here with the components
-        // documentation about them can be found on:
-        // https://docs.open-haus.io/#/backend/components/
+        // add/find devic
+        const device = await new Promise((resolve) => {
+            C_DEVICES.found({
+                labels: [
+                    "particlesensor=true",
+                    "board=eps8266",
+                    "esphome=true"
+                ]
+            }, (device) => {
 
 
-        // scope = plugin class instace
-        console.log(scope);
+                // feedback
+                logger.debug("Particlesensor found", device);
+
+                resolve(device);
+
+            }, async (filter) => {
+
+                // feedback
+                logger.debug("Particlesensor not found, add one");
+
+                await C_DEVICES.add({
+                    name: "Particlesensor",
+                    icon: "fa-solid fa-gauge-high",
+                    ...filter
+                });
+
+            });
+        });
 
 
-        // example logger usage
-        logger.trace("Hello World from plugin ", info.name);
-        logger.verbose("Hello World from plugin ", info.name);
-        logger.debug("Hello World from plugin ", info.name);
-        logger.info("Hello World from plugin ", info.name);
-        logger.warn("Hello World from plugin ", info.name);
-        logger.error("Hello World from plugin ", info.name);
+        // add/find endpoint
+        const endpoint = await new Promise((resolve) => {
+            C_ENDPOINTS.found({
+                labels: [
+                    "particlesensor=true",
+                    "board=eps8266",
+                    "esphome=true"
+                ]
+            }, (endpoint) => {
+
+                // feedback
+                logger.debug("Endpoint found", endpoint);
+
+                resolve(endpoint);
+
+            }, (filter) => {
+
+                // feedbac
+                logger.debug("Endpoint not found, add one");
+
+                C_ENDPOINTS.add({
+                    name: "Particlesensor",
+                    device: device._id,
+                    icon: "fa-solid fa-gauge-high",
+                    states: [{
+                        name: "Particles (µg/m³)",
+                        alias: "particles",
+                        type: "number",
+                        min: 0,
+                        max: 25000
+                    }],
+                    ...filter
+                });
+
+            });
+        });
+
+
+        // add/find mqtt item
+        const mqtt = await new Promise((resolve) => {
+            C_MQTT.found({
+                topic: "air-sensor/sensor/particulate_matter_25m_concentration/state"
+            }, (topic) => {
+
+                // feedback
+                logger.debug("MQTT topic found", topic);
+
+                resolve(topic);
+
+            }, (filter) => {
+
+                logger.debug("MQTT topic not found, add one");
+
+                C_MQTT.add({
+                    description: "ESP8266/ESPHome IKEA VINDSTYRKA Particle sensor",
+                    ...filter
+                });
+
+            });
+        });
+
+
+        // wait for device/endpoint setup
+        Promise.all([device, endpoint, mqtt]).then(() => {
+
+            // feebdack
+            logger.info(`Device handling setup, waiting for changes on mqtt topic "${mqtt.topic}"`);
+
+            mqtt.subscribe((value) => {
+
+                logger.verbose(`mqtt topic: ${mqtt.topic} = ${value}`);
+                endpoint.states[0].value = Number(value);
+
+            });
+
+        }).catch((err) => {
+
+            logger.error(err, "Could not setup device/endoint handling");
+
+        });
 
 
     });
