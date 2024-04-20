@@ -20,7 +20,6 @@ Add plugin item via HTTP API:<br />
    ],
    "uuid": "a0b38ba9-fff8-4878-ac58-69aaa66bcc88"
 }
-
 ```
 Mount the source code into the backend plugins folder
 ```sh
