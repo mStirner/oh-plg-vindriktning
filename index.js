@@ -82,7 +82,7 @@ module.exports = (info, logger, init) => {
         // add/find mqtt item
         const mqtt = await new Promise((resolve) => {
             C_MQTT.found({
-                topic: "air-sensor/sensor/particulate_matter_25m_concentration/state"
+                labels: endpoint.labels
             }, (topic) => {
 
                 // feedback
@@ -95,6 +95,7 @@ module.exports = (info, logger, init) => {
                 logger.debug("MQTT topic not found, add one");
 
                 C_MQTT.add({
+                    topic: "air-sensor/sensor/particulate_matter_25m_concentration/state",
                     description: "ESP8266/ESPHome IKEA VINDSTYRKA Particle sensor",
                     ...filter
                 });
