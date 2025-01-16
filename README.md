@@ -12,7 +12,7 @@ Add plugin item via HTTP API:<br />
 ```json
 {
    "name":"ESPHome/IKEA Vindriktning Integration ",
-   "version":1,
+   "version": "1.0.0",
    "intents":[
       "devices",
       "endpoints",
@@ -29,3 +29,4 @@ sudo mount --bind ~/projects/OpenHaus/plugins/oh-plg-vindriktning/ ~/projects/Op
 # Links
 - https://github.com/Hypfer/esp8266-vindriktning-particle-sensor
 - https://www.ikea.com/de/de/p/vindriktning-luftqualitaetssensor-70498242/
+- https://www.heise.de/ratgeber/Ikea-Feinstaubsensor-Vindriktning-zum-IoT-Device-aufbohren-6164149.html
